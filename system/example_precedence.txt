@@ -1,0 +1,9 @@
+A ^ B | C + D => X
+A ^ B + C | D => X
+A | B ^ C + D => X
+A | B + C ^ D => X
+A + B | C ^ D => X
+A + B ^ C | D => X
+!(A + B) + C + D => X
+=
+?X
