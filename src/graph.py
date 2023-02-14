@@ -10,7 +10,6 @@ class Graph:
     def show_graph(self):
         print(self.query)
         self.__travel_graph(self.rules, 0)
-        print("")
 
     def __travel_graph(self, rules: list[Rule], depth):
         for rule in rules:

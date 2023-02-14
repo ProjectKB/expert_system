@@ -31,6 +31,7 @@ class System:
         print("")
         for graph in self.graph:
             graph.show_graph()
+            print("")
 
     def __connect_rules(self):
         for rule in self.ruleset:
