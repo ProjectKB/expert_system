@@ -4,15 +4,13 @@ from src.graph import Graph
 
 class System:
     ruleset: list[Rule]
-    facts_known: dict[str: int]
-    facts_unknown: dict[str: int]
+    facts: dict[str: int]
     queries: str
     graph: list[Graph] = []
 
-    def __init__(self, ruleset: list[Rule], facts_known: dict[str: int], facts_unknown: dict[str: int], queries: str):
+    def __init__(self, ruleset: list[Rule], facts: dict[str: int], queries: str):
         self.ruleset = ruleset
-        self.facts_known = facts_known
-        self.facts_unknown = facts_unknown
+        self.facts = facts
         self.queries = queries
 
         self.__connect_rules()
@@ -20,8 +18,7 @@ class System:
 
     def __repr__(self) -> str:
         repr = ""
-        repr += f"facts known: {self.facts_known}\n"
-        repr += f"facts unknown: {self.facts_unknown}\n"
+        repr += f"facts: {self.facts}\n"
         repr += "ruleset:\n"
         repr += ''.join([f"\t{rule}\n" for rule in self.ruleset])
         repr += f"queries: {self.queries}"

@@ -38,7 +38,7 @@ def parse(file_name: str) -> System:
 
     __prepare_ruleset(data)
 
-    return System(data['ruleset'], data['facts']['known'], data['facts']['unknown'], data['queries'])
+    return System(data['ruleset'], data['facts']['known'] | data['facts']['unknown'], data['queries'])
 
 
 def __split_patterns(line: str, data: dict) -> None:

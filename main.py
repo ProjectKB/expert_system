@@ -10,5 +10,6 @@ if __name__ == '__main__':
     args = argparse.parse_args()
 
     system = parser.parse(args.file)
-    system.show_graph()
+    print(system)
+    # system.show_graph()
 
