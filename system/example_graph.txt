@@ -1,0 +1,14 @@
+B => A
+T => A
+C => B
+D => B
+E => C + D
+U => T
+V => U
+W => U
+X => U
+Y => V + W
+Z => W + X
+
+=
+?A
