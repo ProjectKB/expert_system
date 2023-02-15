@@ -1,24 +1,25 @@
-from nodes import *
-from values import Bit
+from src.nodes import *
+from src.values import Bit
 
 
 class Interpreter:
-    def visit(self, node: any) -> any:
-        method_name = f'__visit_{type(node).__name__}'
+    def visit(self, node: any, facts: dict[str: int]) -> any:
+        method_name = f'visit_{type(node).__name__}'
         method = getattr(self, method_name)
-        return method(node)
+        return method(node, facts)
 
-    def __visit_LetterNode(self, node: LetterNode) -> Bit:
-        return Bit(node.value)
+    @staticmethod
+    def visit_LetterNode(node: LetterNode, facts: dict[str: int]) -> Bit:
+        return Bit(facts[node.value])
 
-    def __visit_NotNode(self, node: NotNode) -> Bit:
-        return Bit(~node.value)
+    def visit_NotNode(self, node: NotNode, facts: dict[str: int]) -> Bit:
+        return Bit(int(not bool(self.visit(node.node, facts).value)))
 
-    def __visit_AndNode(self, node: AndNode) -> Bit:
-        return Bit(node.node_a & node.node_b)
+    def visit_AndNode(self, node: AndNode, facts: dict[str: int]) -> Bit:
+        return Bit(self.visit(node.node_a, facts).value & self.visit(node.node_b, facts).value)
 
-    def __visit_OrNode(self, node: OrNode) -> Bit:
-        return Bit(node.node_a | node.node_b)
+    def visit_OrNode(self, node: OrNode, facts: dict[str: int]) -> Bit:
+        return Bit(self.visit(node.node_a, facts).value | self.visit(node.node_b, facts).value)
 
-    def __visit_XorNode(self, node: XorNode) -> Bit:
-        return Bit(node.node_a ^ node.node_b)
+    def visit_XorNode(self, node: XorNode, facts: dict[str: int]) -> Bit:
+        return Bit(self.visit(node.node_a, facts).value ^ self.visit(node.node_b, facts).value)
