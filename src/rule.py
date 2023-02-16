@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from src.interpreter import Interpreter
+from src.inverter import Inverter
 
 
 @dataclass
@@ -17,9 +18,18 @@ class Rule:
 
     def infer(self, interpreter: Interpreter, facts: dict[str: int]):
         self.visited = True
-        res = interpreter.visit(self.premised, facts)
+        res_premised = interpreter.visit(self.premised, facts)
 
-        if res.value == 1:
+        if res_premised.value == 1:
             for fact in self.conclusion_facts:
                 facts[fact] = 1
+            res_conclusion = interpreter.visit(self.conclusion, facts)
+            if res_conclusion.value == 0:
+                inverter = Inverter()
+                inverter.invert(self.conclusion)
+                for fact in inverter.to_invert:
+                    facts[fact] = 0
+
+
+
 
