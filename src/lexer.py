@@ -1,6 +1,7 @@
 from collections.abc import Generator
 
 from src.tokens import Token, TokenType, TOKEN_HASH
+from src.error import Error
 
 
 class Lexer:
@@ -33,6 +34,6 @@ class Lexer:
             elif self.current_char in self.OP:
                 yield Token(TOKEN_HASH[self.current_char])
             else:
-                raise Exception(f"Illegal character '{self.current_char}'")
+                Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, f"Illegal character '{self.current_char}'")
             self.__advance()
 

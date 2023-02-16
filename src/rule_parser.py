@@ -1,5 +1,6 @@
 from src.tokens import TokenType
 from src.nodes import *
+from src.error import Error
 
 
 class RuleParser:
@@ -23,7 +24,7 @@ class RuleParser:
         result = self.__expr()
 
         if self.current_token is not None:
-            raise Exception("Invalid Syntax Global")
+            Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, f"invalid syntax: '{self.current_token}'")
 
         return result
 
@@ -60,11 +61,14 @@ class RuleParser:
     def __factor(self) -> any:
         token = self.current_token
 
-        if token.type == TokenType.LPAREN:
+        if not token:
+            Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, f"invalid syntax: missing operand")
+        elif token.type == TokenType.LPAREN:
             self.__advance()
             result = self.__expr()
             if self.current_token is None or self.current_token.type != TokenType.RPAREN:
-                raise Exception("RPARENT ERROR OR NULL ERROR")
+                Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, f"invalid syntax: missing parenthesis")
+
             self.__advance()
             return result
         elif token.type == TokenType.LETTER:
@@ -73,4 +77,6 @@ class RuleParser:
         elif token.type == TokenType.NOT:
             self.__advance()
             return NotNode(self.__factor())
-        raise Exception("Invalid Syntax Factor")
+        else:
+            Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, f"invalid syntax: bad placement of '{token}'")
+

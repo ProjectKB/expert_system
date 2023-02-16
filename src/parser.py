@@ -7,8 +7,8 @@ from src.lexer import Lexer
 from src.rule_parser import RuleParser
 from src.system import System
 
-FACTS_PATTERN = r"^=[a-z|A-Z]*$"
-QUERIES_PATTERN = r"^\?[a-z|A-Z]+$"
+FACTS_PATTERN = r"^=[A-Z]*$"
+QUERIES_PATTERN = r"^\?[A-Z]+$"
 IMPLIES = "=>"
 EQUIV = "<=>"
 
@@ -53,9 +53,7 @@ def __split_patterns(line: str, data: dict) -> None:
         else:
             Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, "queries cannot be set several times")
     else:
-        if len(rule_materials := line.split(EQUIV)) == 2:
-            data['ruleset'].append(__create_rule_or_die(rule_materials, line, EQUIV))
-        elif len(rule_materials := line.split(IMPLIES)) == 2:
+        if EQUIV not in line and len(rule_materials := line.split(IMPLIES)) == 2:
             data['ruleset'].append(__create_rule_or_die(rule_materials, line, IMPLIES))
         else:
             Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, f"syntax error: {line}")
