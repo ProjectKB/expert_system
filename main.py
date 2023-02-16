@@ -19,5 +19,3 @@ if __name__ == '__main__':
 
     system.backward_chaining()
     system.get_solution()
-
-
