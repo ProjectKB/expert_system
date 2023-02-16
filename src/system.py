@@ -20,15 +20,20 @@ class System:
         self.__build_graph()
 
     def __repr__(self) -> str:
-        repr = ""
-        repr += f"facts: {self.facts}\n"
-        repr += "ruleset:\n"
-        repr += ''.join([f"\t{rule}\n" for rule in self.ruleset])
-        repr += f"queries: {self.queries}"
+        repr = "\n\t********************************\n"
+        repr += "\t*            SYSTEM            *\n"
+        repr += "\t********************************\n"
+        repr += f"\n\tfacts: {[k for k in self.facts if self.facts[k] == 1]}\n"
+        repr += "\truleset:\n"
+        repr += ''.join([f"\t\t{rule}\n" for rule in self.ruleset])
+        repr += f"\tqueries: {self.queries}\n"
         return repr
 
     def show_graph(self):
         print("")
+        print("\t********************************")
+        print("\t*            GRAPH             *")
+        print("\t********************************\n")
         for graph in self.graph:
             graph.show_graph()
             print("")
@@ -61,5 +66,9 @@ class System:
             graph.resolve_graph(graph.rules, self.interpreter, self.facts)
 
     def get_solution(self):
+        print("\n\t********************************")
+        print("\t*           QUERIES            *")
+        print("\t********************************\n")
         for query in list(self.queries):
-            print(f"{query}:{self.facts[query]}")
+            print(f"\t{query}:{self.facts[query]}")
+        print("")
