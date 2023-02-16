@@ -8,6 +8,7 @@ if __name__ == '__main__':
     argparse.add_argument("file", help="file containing the system")
     argparse.add_argument("-s", "--system", action="store_true", default=False, help="show system")
     argparse.add_argument("-g", "--graph", action="store_true", default=False, help="show graph")
+    argparse.add_argument("-i", "--interactive", action="store_true", default=False, help="show graph")
 
     args = argparse.parse_args()
     system = parse(args.file)
@@ -18,4 +19,6 @@ if __name__ == '__main__':
         system.show_graph()
 
     system.backward_chaining()
-    system.get_solution()
+
+    if args.interactive:
+        system.handle_interactive()

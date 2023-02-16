@@ -1,11 +1,15 @@
+import copy
+
 from src.rule import Rule
 from src.graph import Graph
 from src.interpreter import Interpreter
+from src.error import Error
 
 
 class System:
     ruleset: list[Rule]
     facts: dict[str: int]
+    base_facts: dict[str: int]
     queries: str
     graph: list[Graph] = []
     interpreter: Interpreter
@@ -13,6 +17,7 @@ class System:
     def __init__(self, ruleset: list[Rule], facts: dict[str: int], queries: str):
         self.ruleset = ruleset
         self.facts = facts
+        self.base_facts = copy.deepcopy(self.facts)
         self.queries = queries
         self.interpreter = Interpreter()
 
@@ -64,11 +69,40 @@ class System:
     def backward_chaining(self):
         for graph in self.graph:
             graph.resolve_graph(graph.rules, self.interpreter, self.facts)
+        self.__get_solution()
 
-    def get_solution(self):
+    def __get_solution(self):
         print("\n\t********************************")
         print("\t*           QUERIES            *")
         print("\t********************************\n")
         for query in list(self.queries):
-            print(f"\t{query}:{self.facts[query]}")
+            try:
+                print(f"\t{query}:{self.facts[query]}")
+            except KeyError:
+                print(f"\t{query}:0")
+
         print("")
+
+    def handle_interactive(self):
+        while 42:
+            try:
+                print(f"\tCurrent facts: {[k for k in self.facts if self.base_facts[k] == 1]}\n")
+                facts = input("\tEnter facts new facts: =").removesuffix('\n')
+
+                for fact in self.facts:
+                    self.facts[fact] = 0
+                if facts != "":
+                    for fact in list(facts):
+                        if not set(fact).intersection(set("ABCDEFGHIJKLMNOPQRSTUVWXYZ")):
+                            Error.throw(Error.FAIL, Error.INPUT_ERROR, f"invalid syntax: '{fact}' should be an uppercase letter")
+                        self.facts[fact] = 1
+                self.base_facts = copy.deepcopy(self.facts)
+                for rule in self.ruleset:
+                    rule.visited = False
+                self.backward_chaining()
+            except KeyboardInterrupt:
+                print("\n\n\tBye!\n")
+                break
+            except EOFError:
+                print("\n\n\tBye!\n")
+                break

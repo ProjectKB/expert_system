@@ -21,6 +21,7 @@ class Error:
     FILE_FORMAT_ERROR = "FileFormatError"
     KEYBOARD_INTERRUPT_ERROR = "KeyboardInterruptError"
     LOGIC_ERROR = "LogicError"
+    INPUT_ERROR = "InputError"
 
     @staticmethod
     def print_error(*msg):
