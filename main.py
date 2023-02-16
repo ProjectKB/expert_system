@@ -10,6 +10,8 @@ if __name__ == '__main__':
     args = argparse.parse_args()
 
     system = parse(args.file)
+    print(system)
+    system.show_graph()
     system.backward_chaining()
     system.get_solution()
 

@@ -20,6 +20,7 @@ class Error:
     UNICODE_DECODE_ERROR = "UnicodeDecodeError"
     FILE_FORMAT_ERROR = "FileFormatError"
     KEYBOARD_INTERRUPT_ERROR = "KeyboardInterruptError"
+    LOGIC_ERROR = "LogicError"
 
     @staticmethod
     def print_error(*msg):
