@@ -1,11 +1,4 @@
-B => A
-D + E => B
-G + H => F
-I + J => F
-G => H
-L + M => K
-O + P => L + N
-N => M
+A ^ !B => C
 
-?AFKP
-=DEIJOP
+?C
+=AB

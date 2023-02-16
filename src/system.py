@@ -1,5 +1,6 @@
 from src.rule import Rule
 from src.graph import Graph
+from src.interpreter import Interpreter
 
 
 class System:
@@ -7,11 +8,13 @@ class System:
     facts: dict[str: int]
     queries: str
     graph: list[Graph] = []
+    interpreter: Interpreter
 
     def __init__(self, ruleset: list[Rule], facts: dict[str: int], queries: str):
         self.ruleset = ruleset
         self.facts = facts
         self.queries = queries
+        self.interpreter = Interpreter()
 
         self.__connect_rules()
         self.__build_graph()
@@ -52,3 +55,11 @@ class System:
                     rules.append(rule)
             if rules:
                 self.graph.append(Graph(query, rules))
+
+    def backward_chaining(self):
+        for graph in self.graph:
+            graph.resolve_graph(graph.rules, self.interpreter, self.facts)
+
+    def get_solution(self):
+        for query in list(self.queries):
+            print(f"{query}:{self.facts[query]}")

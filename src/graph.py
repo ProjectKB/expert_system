@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from src.rule import Rule
+from src.interpreter import Interpreter
 
 
 @dataclass
@@ -16,3 +17,10 @@ class Graph:
             print(f"{'-' * (depth + 1)}{rule}")
             if rule.children:
                 self.__travel_graph(rule.children, depth + 1)
+
+    def resolve_graph(self, rules: list[Rule], interpreter: Interpreter, facts: dict[str: int]):
+        for rule in rules:
+            if rule.children:
+                self.resolve_graph(rule.children, interpreter, facts)
+            if not rule.visited:
+                rule.infer(interpreter, facts)

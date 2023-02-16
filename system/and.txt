@@ -8,4 +8,4 @@ O + P => L + N
 N => M
 
 ?AFKP
-=DEIJOP
+=DEIJP

@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from src.interpreter import Interpreter
 
 
 @dataclass
@@ -14,4 +15,11 @@ class Rule:
     def __repr__(self) -> str:
         return f"{self.premised} {self.op} {self.conclusion}"
 
+    def infer(self, interpreter: Interpreter, facts: dict[str: int]):
+        self.visited = True
+        res = interpreter.visit(self.premised, facts)
+
+        if res.value == 1:
+            for fact in self.conclusion_facts:
+                facts[fact] = 1
 

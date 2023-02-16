@@ -1,7 +1,6 @@
 import argparse as a
 
 from src.parser import parse
-from src.interpreter import Interpreter
 
 
 if __name__ == '__main__':
@@ -11,12 +10,7 @@ if __name__ == '__main__':
     args = argparse.parse_args()
 
     system = parse(args.file)
-    # print(system)
-    # system.show_graph()
-    rule = system.ruleset[0].premised
-    interpreter = Interpreter()
+    system.backward_chaining()
+    system.get_solution()
 
-    res = interpreter.visit(rule, system.facts)
-
-    print(res)
 
