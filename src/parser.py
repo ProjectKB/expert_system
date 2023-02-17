@@ -24,11 +24,17 @@ def parse(file_name: str) -> System:
         Error.throw(Error.FAIL, Error.FILE_NOT_FOUND_ERROR, f"file not found: {file_name}")
     try:
         with open(file_name, 'r') as f:
+            rules = []
+
             for line in f.readlines():
                 line = line.removesuffix("\n")
                 line = __remove_comment(line)
                 if line != "":
-                    __split_patterns(line, data)
+                    __split_patterns(line, data, rules)
+
+        __check_repetition(rules, 'rules')
+        __check_repetition(data['queries'], 'queries')
+
         if not data['facts'] or not data['ruleset'] or not data['queries']:
             Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, "you must define a ruleset, facts and at least one query")
     except UnicodeDecodeError:
@@ -41,10 +47,12 @@ def parse(file_name: str) -> System:
     return System(data['ruleset'], data['facts']['known'] | data['facts']['unknown'], data['queries'])
 
 
-def __split_patterns(line: str, data: dict) -> None:
+def __split_patterns(line: str, data: dict, rules: list[str]) -> None:
     if f := re.match(FACTS_PATTERN, line):
         if not data['facts']['known']:
-            data['facts']['known'] = {letter: 1 for letter in f.group()[1:]}
+            facts = f.group()[1:]
+            __check_repetition(facts, 'facts')
+            data['facts']['known'] = {letter: 1 for letter in facts}
         else:
             Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, "initial facts cannot be set several times")
     elif q := re.match(QUERIES_PATTERN, line):
@@ -54,6 +62,7 @@ def __split_patterns(line: str, data: dict) -> None:
             Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, "queries cannot be set several times")
     else:
         if EQUIV not in line and len(rule_materials := line.split(IMPLIES)) == 2:
+            rules.append(line)
             data['ruleset'].append(__create_rule_or_die(rule_materials, line, IMPLIES))
         else:
             Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, f"syntax error: {line}")
@@ -68,7 +77,9 @@ def __remove_comment(line: str) -> str:
 
 def __create_rule_or_die(rule_materials: list[str], line: str, op: str) -> dict:
     premised, conclusion = rule_materials
-    if not len(premised.strip()) or not len(conclusion.strip()):
+    if {"|", "^"}.intersection(set(list(conclusion))):
+        Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, f"rule syntax error: {conclusion}")
+    elif not len(premised.strip()) or not len(conclusion.strip()):
         Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, f"rule syntax error: {line}")
     return {'premised': premised, 'op': op, 'conclusion': conclusion}
 
@@ -91,3 +102,6 @@ def __prepare_ruleset(data: dict) -> None:
     data['ruleset'] = ruleset
 
 
+def __check_repetition(data: any, case: str) -> None:
+    if len(data) != len(set(data)):
+        Error.throw(Error.FAIL, Error.FILE_FORMAT_ERROR, f"syntax error: repetition are not allowed for {case}")
