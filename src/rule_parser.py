@@ -17,6 +17,14 @@ class RuleParser:
         except StopIteration:
             self.current_token = None
 
+    # Precedence:
+    # (-> expr)
+    # NOT
+    # [A-Z]
+    # AND
+    # OR
+    # XOR
+    # END
     def parse(self) -> any:
         if self.current_token is None:
             return None
@@ -28,6 +36,14 @@ class RuleParser:
 
         return result
 
+
+    # Precedence:
+    # (-> expr)
+    # NOT
+    # [A-Z]
+    # AND
+    # OR
+    # XOR
     def __expr(self) -> any:
         result = self.__expr2()
 
@@ -38,6 +54,13 @@ class RuleParser:
 
         return result
 
+
+    # Precedence:
+    # (-> expr)
+    # NOT
+    # [A-Z]
+    # AND
+    # OR
     def __expr2(self) -> any:
         result = self.__term()
 
@@ -48,6 +71,11 @@ class RuleParser:
 
         return result
 
+    # Precedence:
+    # (-> expr)
+    # NOT
+    # [A-Z]
+    # AND
     def __term(self) -> any:
         result = self.__factor()
 
@@ -58,6 +86,10 @@ class RuleParser:
 
         return result
 
+    # Precedence:
+    # (-> expr)
+    # NOT
+    # [A-Z]
     def __factor(self) -> any:
         token = self.current_token
 
