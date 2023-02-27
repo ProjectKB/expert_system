@@ -1,6 +1,6 @@
 import argparse as a
 
-from src.parser import parse
+from src.parse import parse
 
 
 if __name__ == '__main__':

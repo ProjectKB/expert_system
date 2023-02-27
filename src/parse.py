@@ -84,7 +84,7 @@ def __create_rule_or_die(rule_materials: list[str], line: str, op: str) -> dict:
     return {'premised': premised, 'op': op, 'conclusion': conclusion}
 
 
-def __parse_rule(text: str, data: dict, rule_facts: []) -> any:
+def __parse_rule(text: str, data: dict, rule_facts: list) -> any:
     lexer = Lexer(text)
     tokens = lexer.generate_tokens(data, rule_facts)
     parser = RuleParser(tokens)

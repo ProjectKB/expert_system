@@ -22,7 +22,7 @@ class Lexer:
         except StopIteration:
             self.current_char = None
 
-    def generate_tokens(self, data: {}, rule_facts: list[str]) -> Generator:
+    def generate_tokens(self, data: dict, rule_facts: list[str]) -> Generator:
         while self.current_char is not None:
             if self.current_char in self.WHITESPACE:
                 pass

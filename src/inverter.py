@@ -1,5 +1,4 @@
 from src.nodes import *
-from src.values import Bit
 
 
 class Inverter:
