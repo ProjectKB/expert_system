@@ -21,17 +21,20 @@ class Graph:
 
     def show_graph(self):
         print(f"\t{self.WHITE}[{self.query}]{self.ENDC}")
-        self.__travel_graph(self.rules, 0)
+        self.__travel_graph(self.rules, [], 0)
 
-    def __travel_graph(self, rules: list[Rule], depth):
+    def __travel_graph(self, rules: list[Rule], visited: list[Rule], depth):
         for rule in rules:
-            print(f"\t{self.COLORS[depth % 6]}{'-' * (depth + 1)}{rule}{self.ENDC}")
-            if rule.children:
-                self.__travel_graph(rule.children, depth + 1)
+            if rule not in visited:
+                visited.append(rule)
+                print(f"\t{self.COLORS[depth % 6]}{'-' * (depth + 1)}{rule}{self.ENDC}")
+                if rule.children:
+                    self.__travel_graph(rule.children, visited, depth + 1)
 
     def resolve_graph(self, rules: list[Rule], interpreter: Interpreter, facts: dict[str: int]):
         for rule in rules:
-            if rule.children:
-                self.resolve_graph(rule.children, interpreter, facts)
             if not rule.visited:
+                rule.visited = True
+                if rule.children:
+                    self.resolve_graph(rule.children, interpreter, facts)
                 rule.infer(interpreter, facts)

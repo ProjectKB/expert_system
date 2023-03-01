@@ -18,7 +18,6 @@ class Rule:
         return f"{self.premised} {self.op} {self.conclusion}"
 
     def infer(self, interpreter: Interpreter, facts: dict[str: int]):
-        self.visited = True
         res_premised = interpreter.visit(self.premised, facts)
 
         if res_premised.value == 1:
