@@ -31,10 +31,10 @@ class Graph:
                 if rule.children:
                     self.__travel_graph(rule.children, visited, depth + 1)
 
-    def resolve_graph(self, rules: list[Rule], interpreter: Interpreter, facts: dict[str: int]):
+    def resolve_graph(self, rules: list[Rule], visited: list[Rule], interpreter: Interpreter, facts: dict[str: int]):
         for rule in rules:
-            if not rule.visited:
-                rule.visited = True
+            if rule not in visited:
+                visited.append(rule)
                 if rule.children:
-                    self.resolve_graph(rule.children, interpreter, facts)
+                    self.resolve_graph(rule.children, visited, interpreter, facts)
                 rule.infer(interpreter, facts)

@@ -68,7 +68,7 @@ class System:
 
     def backward_chaining(self):
         for graph in self.graph:
-            graph.resolve_graph(graph.rules, self.interpreter, self.facts)
+            graph.resolve_graph(graph.rules, [], self.interpreter, self.facts)
         self.__get_solution()
 
     def __get_solution(self):
@@ -90,15 +90,13 @@ class System:
                 facts = input("\tEnter facts new facts: =").removesuffix('\n')
 
                 for fact in self.facts:
-                    self.facts[fact] = 0
+                    self.facts[fact] = 0;
                 if facts != "":
                     for fact in list(facts):
                         if not set(fact).intersection(set("ABCDEFGHIJKLMNOPQRSTUVWXYZ")):
                             Error.throw(Error.FAIL, Error.INPUT_ERROR, f"invalid syntax: '{fact}' should be an uppercase letter")
                         self.facts[fact] = 1
                 self.base_facts = copy.deepcopy(self.facts)
-                for rule in self.ruleset:
-                    rule.visited = False
                 self.backward_chaining()
             except KeyboardInterrupt:
                 print("\n\n\tBye!\n")
