@@ -22,23 +22,24 @@ class Rule:
         if res_premised.value == 1:
             conclusion_memory = {fact: facts[fact] for fact in self.conclusion_facts}
             for fact in self.conclusion_facts:
-                if facts.get(f'{fact}_inverted'):
-                    Error.throw(Error.FAIL, Error.LOGIC_ERROR, f"There is something wrong in the logic for this rule: {self.__repr__()}")
-                facts[fact] = 1
-            res_conclusion = interpreter.visit(self.conclusion, facts)
-            premised_memory = {fact: facts[fact] for fact in self.premised_facts}
+                # handle when facts have already been inverted (cf multi_conclusions_negation)
+                if not facts.get(f'{fact}_inverted'):
+                    facts[fact] = 1
 
-            # handle conclusion neg case
+            res_conclusion = interpreter.visit(self.conclusion, facts)
+
+            # handle conclusion inverted facts
             if res_conclusion.value == 0:
+                for fact in self.conclusion_facts:
+                    # fact has already been inverted in anterior rule (cf negation3.1)
+                    if facts.get(f'{fact}_inverted'):
+                        Error.throw(Error.FAIL, Error.LOGIC_ERROR, f"In rule \"{self.__repr__()}\" fact \"{fact}\" has already been inverted in anterior rule")
+
                 inverter = Inverter()
                 inverter.invert(self.conclusion)
                 for fact in inverter.to_invert:
+                    # fact has to be true because of anterior rule/fact (cf negation3.2/negation4/negation5)
                     if conclusion_memory[fact] == 1:
-                        Error.throw(Error.FAIL, Error.LOGIC_ERROR, f"There is something wrong in the logic for this rule: {self.__repr__()}")
+                        Error.throw(Error.FAIL, Error.LOGIC_ERROR, f"In rule \"{self.__repr__()}\" fact \"{fact}\" can't be inverted because it has been defined as true in anterior rule or initial/premised facts")
                     facts[fact] = 0
                     facts[f'{fact}_inverted'] = True
-
-            intersections = list(set(self.premised_facts).intersection(set(self.conclusion_facts)))
-            for intersection in intersections:
-                if premised_memory[intersection] != facts[intersection]:
-                    Error.throw(Error.FAIL, Error.LOGIC_ERROR, f"There is something wrong in the logic for this rule: {self.__repr__()}")

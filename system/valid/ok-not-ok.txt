@@ -4,5 +4,5 @@ C => D
 !D => A
 
 =C
-?DCBA
-#?ABCD
+#?DCBA
+?ABCD

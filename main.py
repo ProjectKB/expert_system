@@ -11,7 +11,7 @@ if __name__ == '__main__':
     argparse.add_argument("-i", "--interactive", action="store_true", default=False, help="show graph")
 
     args = argparse.parse_args()
-    system = parse(args.file)
+    system = parse(args)
 
     if args.system:
         print(system)

@@ -14,10 +14,12 @@ class System:
     graph: list[Graph] = []
     interpreter: Interpreter
 
-    def __init__(self, ruleset: list[Rule], facts: dict[str: int], queries: str):
+    def __init__(self, ruleset: list[Rule], facts: dict[str: int], queries: str, args):
+        self.args = args
         self.ruleset = ruleset
         self.facts = facts
         self.base_facts = copy.deepcopy(self.facts)
+        self.base_ruleset = copy.deepcopy(self.ruleset)
         self.queries = queries
         self.interpreter = Interpreter()
 
@@ -35,21 +37,25 @@ class System:
         return repr
 
     def show_graph(self):
-        print("")
-        print("\t********************************")
-        print("\t*            GRAPH             *")
-        print("\t********************************\n")
-        for graph in self.graph:
-            graph.show_graph()
+        if self.graph:
             print("")
+            print("\t********************************")
+            print("\t*            GRAPH             *")
+            print("\t********************************\n")
+            for graph in self.graph:
+                graph.show_graph()
+                print("")
 
     def __connect_rules(self):
         for rule in self.ruleset:
+            # no need to search for children rule when premised fact are already known
+            if not [False for premised in rule.premised_facts if self.facts[premised] == 0]:
+                continue
+
             for child in self.ruleset:
                 if rule == child:
                     continue
-
-                if set(rule.premised_facts).intersection(set(child.conclusion_facts)):
+                elif set(rule.premised_facts).intersection(set(child.conclusion_facts)):
                     match rule.children:
                         case None:
                             rule.children = [child]
@@ -86,7 +92,7 @@ class System:
     def handle_interactive(self):
         while 42:
             try:
-                print(f"\tCurrent facts: {[k for k in self.facts if self.base_facts[k] == 1]}\n")
+                print(f"\tCurrent facts: {[k for k in self.facts if self.base_facts.get(k) == 1]}\n")
                 facts = input("\tEnter facts new facts: =").removesuffix('\n')
 
                 for fact in self.facts:
@@ -96,7 +102,19 @@ class System:
                         if not set(fact).intersection(set("ABCDEFGHIJKLMNOPQRSTUVWXYZ")):
                             Error.throw(Error.FAIL, Error.INPUT_ERROR, f"invalid syntax: '{fact}' should be an uppercase letter")
                         self.facts[fact] = 1
+
+                # reset facts and create new connection between rules
                 self.base_facts = copy.deepcopy(self.facts)
+                self.ruleset = copy.deepcopy(self.base_ruleset)
+                self.__connect_rules()
+
+                if self.args.system:
+                    print(self.__repr__())
+                if self.args.graph:
+                    self.graph = []
+                    self.__build_graph()
+                    self.show_graph()
+
                 self.backward_chaining()
             except KeyboardInterrupt:
                 print("\n\n\tBye!\n")
